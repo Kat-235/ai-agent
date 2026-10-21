@@ -1,3 +1,4 @@
+from operator import itemgetter
 from posixpath import commonpath
 import os
 
@@ -10,10 +11,22 @@ def get_files_info(working_directory: str, directory: str = ".") -> str:
         if valid_target_dir == False:
             raise Exception(f'Error: Cannot list "{directory}" as it is outside the permitted working directory')
 
-        if os.path.isdir(directory) == False:
+        if os.path.isdir(target_dir) == False:
             raise Exception(f'Error: "{directory}" is not a directory')
 
-        return f'Success: "{directory}" is within the working directory'
+        items = []
+
+        for item in os.listdir(directory):
+            name = str(item)
+            size = os.path.getsize(item)
+            is_directory = os.path.isdir(item)
+            items.append(f"- {name}: file_size={size} bytes, is_dir={is_directory}")
+
+        items_str = "\n  ".join(items)
+        result = f"Result for current directory:\n  {items_str}"
+
+        return result
+
 
     except Exception as e:
         return e
